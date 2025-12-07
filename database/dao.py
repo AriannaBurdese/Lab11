@@ -8,7 +8,7 @@ class DAO:
         Implementare tutte le funzioni necessarie a interrogare il database.
       """
     @staticmethod
-    def get_all_nodes() -> list[Rifugio] | None:
+    def get_nodes() -> list[Rifugio] | None:
         cnx = DBConnect.get_connection()
         result = []
         if cnx is None:
@@ -25,7 +25,7 @@ class DAO:
                     id = row['id'],
                     nome = row["nome"],
                     localita = row["localita"],
-                    altitude = row["altitude"],
+                    altitudine = row["altitudine"],
                     capienza = row["capienza"],
                     aperto = row["aperto"],
                 )
@@ -41,7 +41,7 @@ class DAO:
 
 
     @staticmethod
-    def get_all_edges() -> list[Sentiero] | None:
+    def get_edges(year) -> list[Sentiero] | None:
         cnx = DBConnect.get_connection()
         result = []
         if cnx is None:
@@ -49,9 +49,10 @@ class DAO:
             return None
         cursor = cnx.cursor(dictionary=True)
         query = ("""SELECT *
-                    FROM sentiero """)
+                    FROM connessione 
+                    WHERE anno <= %s""")
         try:
-            cursor.execute(query)
+            cursor.execute(query,(year,))
             for row in cursor:
                 sentiero = Sentiero(
                     id = row['id'],
